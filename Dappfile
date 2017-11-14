@@ -1,0 +1,36 @@
+dimg do
+  artifact do
+    docker.from "ubuntu:16.04"
+
+    shell.before_install do
+      run "apt-get update"
+      run "apt-get install -y build-essential gawk wget"
+      run "wget https://ftp.gnu.org/gnu/glibc/glibc-2.26.tar.gz"
+      run "tar xf glibc-2.26.tar.gz"
+    end
+
+    shell.install do
+      run "cd /glibc-2.26"
+      run "mkdir build"
+      run "cd build"
+      run [
+        "../configure",
+        "--prefix=/.dapp/deps/core/0.1.0",
+        "--disable-werror",
+        "--enable-kernel=3.2",
+        "--enable-stack-protector=strong",
+        "libc_cv_slibdir=/.dapp/deps/core/0.1.0/lib",
+      ].join(" ")
+    end
+
+    shell.setup do
+      run "cd /glibc-2.26/build"
+      run "make -j4"
+      run "make install"
+    end
+
+    export "/.dapp/deps/core/0.1.0" do
+      to "/.dapp/deps/core/0.1.0"
+    end
+  end
+end
