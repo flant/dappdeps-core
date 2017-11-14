@@ -25,7 +25,7 @@ dimg do
 
     shell.setup do
       run "cd /glibc-2.26/build"
-      run "make -j4"
+      run "make -j4 | sed -n '0~100p'"
       run "make install"
     end
 
