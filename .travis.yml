@@ -11,7 +11,10 @@ install:
   - docker version
 
 script:
-  - ./build_and_push.sh
+  - dapp dimg build
+
+after_success:
+  - if [ -n "$TRAVIS_TAG" ] ; then docker login -u $DOCKER_HUB_LOGIN -p $DOCKER_HUB_PASSWORD && dapp dimg spush dappdeps/core --tag $TRAVIS_TAG ; fi
 
 branches:
   only:
